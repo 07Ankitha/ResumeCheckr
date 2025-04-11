@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="1067" viewBox="0 0 800 1067" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="1067" fill="#FFFFFF"/>
+  
+  <!-- Modern Header -->
+  <rect x="0" y="0" width="800" height="200" fill="#3B82F6"/>
+  <text x="100" y="80" font-family="Arial" font-size="32" fill="#FFFFFF">John Doe</text>
+  <text x="100" y="120" font-family="Arial" font-size="18" fill="#E5E7EB">Software Engineer</text>
+  
+  <!-- Contact Info -->
+  <text x="100" y="160" font-family="Arial" font-size="14" fill="#E5E7EB">Email: john@example.com | Phone: (555) 123-4567</text>
+  
+  <!-- Experience Section -->
+  <text x="100" y="300" font-family="Arial" font-size="24" fill="#1F2937">Experience</text>
+  <line x1="100" y1="320" x2="700" y2="320" stroke="#3B82F6" stroke-width="3"/>
+  
+  <!-- Experience Items -->
+  <text x="120" y="360" font-family="Arial" font-size="16" fill="#1F2937">Senior Software Engineer</text>
+  <text x="120" y="380" font-family="Arial" font-size="14" fill="#4B5563">Tech Company Inc. | 2018 - Present</text>
+  
+  <!-- Skills Section -->
+  <text x="100" y="500" font-family="Arial" font-size="24" fill="#1F2937">Skills</text>
+  <line x1="100" y1="520" x2="700" y2="520" stroke="#3B82F6" stroke-width="3"/>
+  
+  <!-- Skills List -->
+  <text x="120" y="560" font-family="Arial" font-size="14" fill="#4B5563">JavaScript, React, Node.js, Python</text>
+</svg> 

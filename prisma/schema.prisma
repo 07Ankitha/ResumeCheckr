@@ -1,0 +1,216 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+
+  // Add these two:
+  password String
+  role     String @default("user") // optional, but helpful if you want admin vs user roles
+
+  accounts              Account[]
+  sessions              Session[]
+  resumes               Resume[]
+  linkedInProfile       LinkedInProfile?
+  subscription          Subscription?
+  resumeAnalyses        ResumeAnalysis[]
+  resumeAnalysesWithJob ResumeAnalysisWithJob[]
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Resume {
+  id                     String                 @id @default(cuid())
+  createdAt              DateTime               @default(now())
+  updatedAt              DateTime               @updatedAt
+  userId                 String
+  user                   User                   @relation(fields: [userId], references: [id])
+  title                  String
+  fileUrl                String
+  content                String?
+  generalAnalysis        Analysis?              @relation("ResumeToAnalysis")
+  jobDescriptionAnalysis ResumeAnalysisWithJob?
+  ResumeAnalysis         ResumeAnalysis?
+}
+
+model LinkedInProfile {
+  id          String    @id @default(cuid())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  userId      String    @unique
+  user        User      @relation(fields: [userId], references: [id])
+  profileUrl  String
+  profileData Json?
+  lastSynced  DateTime?
+  Analysis    Analysis?
+}
+
+model Analysis {
+  id                String           @id @default(cuid())
+  resumeId          String?          @unique
+  resume            Resume?          @relation("ResumeToAnalysis", fields: [resumeId], references: [id])
+  linkedinProfileId String?          @unique
+  linkedinProfile   LinkedInProfile? @relation(fields: [linkedinProfileId], references: [id])
+  score             Float
+  strengths         String // Store JSON string of strengths array
+  weaknesses        String // Store JSON string of weaknesses array
+  recommendations   String // Store JSON string of recommendations array
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+}
+
+model Subscription {
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  userId    String    @unique
+  user      User      @relation(fields: [userId], references: [id])
+  plan      String // 'free', 'pro', 'enterprise'
+  status    String // 'active', 'cancelled', 'expired'
+  startDate DateTime
+  endDate   DateTime?
+}
+
+model ResumeAnalysis {
+  id             String   @id @default(cuid())
+  createdAt      DateTime @default(now())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  resumeId       String   @unique
+  resume         Resume   @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  score          Int
+  overallScore   Int?
+  personalInfo   Json
+  summary        String
+  skills         Json
+  experience     Json
+  education      Json
+  projects       Json
+  certifications Json
+  strengths      String[]
+  weaknesses     String[]
+  suggestions    String[]
+  grammarErrors  Int
+  grammarScore   Int
+  wordCount      Int
+  wordCountScore Int
+  missingFields  Int
+  sectionScores  Json
+}
+
+model ResumeAnalysisWithJob {
+  id             String   @id @default(cuid())
+  createdAt      DateTime @default(now())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  resumeId       String   @unique
+  resume         Resume   @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  jobDescription String
+  score          Int
+  overallScore   Int?
+  techMatch      Json // Stores the techMatch object from analyze-resume-with-job
+  matchedSkills  String[]
+  missingSkills  String[]
+  extraSkills    String[]
+  breakdown      Json // Stores the breakdown object
+}
+
+model Template {
+  id          Int                @id @default(autoincrement())
+  name        String             @unique
+  category    String
+  description String
+  image       String
+  previewUrl  String
+  isPremium   Boolean            @default(false)
+  features    String[]
+  downloads   TemplateDownload[]
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+}
+
+model TemplateDownload {
+  id         Int      @id @default(autoincrement())
+  template   Template @relation(fields: [templateId], references: [id])
+  templateId Int
+  userId     String?
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  subject   String
+  message   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model createresume {
+  id             String   @id @default(uuid())
+  fullName       String
+  email          String
+  phone          String
+  location       String
+  education      Json    
+  skills         String
+  experience     Json     
+  projects       Json     
+  certifications Json
+  github         String
+  linkedin       String
+  portfolio      String
+  createdAt      DateTime @default(now())
+}
+
+
+
